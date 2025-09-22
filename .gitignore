@@ -1,0 +1,58 @@
+# -------------------
+# Python
+# -------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# Virtual environments
+venv/
+env/
+.venv/
+coe/        # your local pyenv virtual environment folder
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*.ipynb
+
+# -------------------
+# Data & Outputs
+# -------------------
+# FAISS index files
+*.faiss
+*.pkl
+
+# SQLite databases
+*.db
+
+# PDFs and images
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# Output / generated files
+output_of_stages/
+questions_storage/faiss_index/
+new_faiss_index/
+
+# -------------------
+# OS / Editor files
+# -------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# -------------------
+# Custom project files
+# -------------------
+# If you want to ignore master JSON (keep local only)
+master_questions.json
