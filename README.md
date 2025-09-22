@@ -2,7 +2,7 @@
 ### Overview of My Contribution
 
 ### 1. OCR Text Extraction
-- Built a script (`without flask.py`) to extract text from both **PDFs** and **images**.
+- Built a script (`without_flask.py`) to extract text from both **PDFs** and **images**.
 - Used `PyMuPDF` to convert PDF pages to images and applied `pytesseract` for OCR.
 - Applied basic checks for diagrams, mathematical symbols, and shape content.
 - Output saved as: `extracted_output.txt`
@@ -19,7 +19,7 @@
   - Generated questions using the model `Ollama (gemma3:1b)` 
   - Used `Ollama (gemma3:1b)` via LangChain to predict **subtopics** for each question.
   - Labeled each question with topic, subtopic, marks, difficulty, time, and cognitive level.
-- Output saved as: `output_questions.json`
+- Output saved as: `generated_questions.json`
 
 #### 4. Subtopic Cleaning
 - Created `subtopics.py` to:
@@ -42,13 +42,13 @@
 
 ### Output
 - `extracted_output.txt`: OCR + refined content
-- `output_questions.json`: Raw question generation output
+- `generated_questions.json`: Raw question generation output
 - `questions.json`: Cleaned and finalized questions with proper subtopics
 - `faiss_index_ollama/`: Vector store containing embedded questions
 
 
 ### Tools & Models Used
 - `pytesseract`, `PyMuPDF`, `OpenCV`
-- `transformers` (T5 question generator)
 - `LangChain` + `Ollama` with `llama3`
+- `gemma3:1b` for question generation
 - `FAISS` for vector storage and retrieval
