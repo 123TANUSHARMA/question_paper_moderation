@@ -16,8 +16,8 @@
 #### 3. Question Generation
 - Developed `questions_generator.py`:
   - Split the cleaned text into meaningful chunks.
-  - Generated questions using the model `iarfmoose/t5-base-question-generator`.
-  - Used `Ollama (llama3)` via LangChain to predict **subtopics** for each question.
+  - Generated questions using the model `Ollama (gemma3:1b)` 
+  - Used `Ollama (gemma3:1b)` via LangChain to predict **subtopics** for each question.
   - Labeled each question with topic, subtopic, marks, difficulty, time, and cognitive level.
 - Output saved as: `output_questions.json`
 
