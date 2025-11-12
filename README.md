@@ -54,5 +54,6 @@
 - `FAISS` for vector storage and retrieval
 
 
-### for activating the environment : source /Users/tanusharma/Downloads/coe-project/coe/bin/activate
+<!-- > for activating the environment : source /Users/tanusharma/Downloads/coe-project/coe/bin/activate
 # reove all thes things like okay here is the text , okay here is , Q1 , AOA , CO, [MARK1] etc
+-->
