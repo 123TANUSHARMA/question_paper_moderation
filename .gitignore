@@ -1,58 +1,77 @@
-# -------------------
-# Python
-# -------------------
+# ---- Python ----
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 *.so
-*.egg-info/
 *.egg
+*.egg-info/
 *.log
 
-# Virtual environments
+# ---- Virtual Environment ----
 venv/
 env/
 .venv/
-coe/        # your local pyenv virtual environment folder
+pyvenv.cfg
+coe/
+bin/
+lib/
+include/
+share/
 
-# Jupyter / IPython
-.ipynb_checkpoints/
-*.ipynb
+# ---- IDE & System Files ----
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
 
-# -------------------
-# Data & Outputs
-# -------------------
-# FAISS index files
+# ---- Data & Index Files ----
+# FAISS and Pickle indexes
 *.faiss
 *.pkl
+*.npy
+*.npz
 
-# SQLite databases
+# Databases
 *.db
+*.sqlite
+*.sqbpro
 
-# PDFs and images
+# CSV and intermediate output files
+*.csv
+/output_of_stages/
+*/output_of_stages/
+*/question_storage/faiss_index/
+
+# ---- Model Files ----
+/models/
+!models/README.md   # Keep a README if present
+
+# ---- PDFs, Images, Temporary Exports ----
 *.pdf
 *.png
 *.jpg
 *.jpeg
+*.gif
 
-# Output / generated files
-output_of_stages/
-questions_storage/faiss_index/
-new_faiss_index/
+# ---- Logs and Temp ----
+*.log
+*.tmp
+*.bak
 
-# -------------------
-# OS / Editor files
-# -------------------
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.vscode/
-.idea/
+# ---- Project-Specific ----
+# Ignore generated index folders
+/faiss_index_ollama/
+/new_faiss_index/
+/question_storage/faiss_index/
+/Clean_subtopics/__pycache__/
+/Pyteseract/
 
-# -------------------
-# Custom project files
-# -------------------
-# If you want to ignore master JSON (keep local only)
-master_questions.json
+# ---- Jupyter ----
+.ipynb_checkpoints/
+*.ipynb
+
+# ---- Misc ----
+# Backup files
+*~
