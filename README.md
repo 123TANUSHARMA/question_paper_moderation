@@ -47,7 +47,7 @@
 - `faiss_index_ollama/`: Vector store containing embedded questions
 
 
-### Tools & Models Used
+### Tools & Models Used in the project
 - `pytesseract`, `PyMuPDF`, `OpenCV`
 - `LangChain` + `Ollama` with `llama3`
 - `gemma3:1b` for question generation
