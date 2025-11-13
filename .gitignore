@@ -34,15 +34,12 @@ share/
 *.npz
 
 # Databases
-*.db
-*.sqlite
 *.sqbpro
 
 # CSV and intermediate output files
 *.csv
 /output_of_stages/
 */output_of_stages/
-*/question_storage/faiss_index/
 
 # ---- Model Files ----
 /models/
