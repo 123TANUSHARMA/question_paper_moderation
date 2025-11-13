@@ -11,6 +11,16 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from question_inference import get_predicted_values
 
+# Import BERT difficulty predictor
+try:
+    from difficulty_predictor import predict_difficulty
+    BERT_AVAILABLE = True
+    print("✅ BERT difficulty predictor loaded successfully")
+except ImportError as e:
+    BERT_AVAILABLE = False
+    print(f"⚠️  BERT predictor not available: {e}")
+    print("   Falling back to LLM-based difficulty assignment")
+
 # Load Ollama LLM with increased temperature for better generation
 llm = OllamaLLM(model="gemma3:1b", temperature=0.7)
 output_parser = StrOutputParser()
@@ -73,6 +83,46 @@ MARKS_META = {
 }
 
 splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=150)
+
+def predict_difficulty_bert(question, question_type, cognitive_level, topic, marks):
+    """
+    Predict difficulty using BERT model
+    Falls back to default if BERT is not available
+    """
+    if not BERT_AVAILABLE:
+        # Fallback to mark-based heuristic
+        if marks == 2:
+            return "easy"
+        elif marks == 3:
+            return "medium"
+        else:
+            return "hard"
+    
+    try:
+        result = predict_difficulty(
+            question=question,
+            question_type=question_type,
+            cognitive_level=cognitive_level,
+            topic=topic,
+            marks=marks
+        )
+        
+        difficulty = result['predicted_difficulty']
+        confidence = result['confidence']
+        
+        print(f"      🎯 BERT Prediction: {difficulty.upper()} (confidence: {confidence:.2%})")
+        
+        return difficulty
+        
+    except Exception as e:
+        print(f"      ⚠️  BERT prediction failed: {e}")
+        # Fallback to mark-based heuristic
+        if marks == 2:
+            return "easy"
+        elif marks == 3:
+            return "medium"
+        else:
+            return "hard"
 
 def extract_existing_questions(text):
     """Extract questions with improved regex patterns"""
@@ -228,7 +278,7 @@ def detect_subtopic_with_llm(question, topic):
         return "General"
 
 def generate_questions(text, questions_per_category=3):
-    """Main generation function with diagnostics"""
+    """Main generation function with BERT-based difficulty prediction"""
     
     if not text or len(text.strip()) < 100:
         print("⚠️  Text too short")
@@ -259,7 +309,7 @@ def generate_questions(text, questions_per_category=3):
     marks_buckets = {2: [], 3: [], 5: []}
     seen_questions = set()
     
-    # Add extracted questions first
+    # Add extracted questions first (with BERT difficulty prediction)
     for marks in [2, 3, 5]:
         for eq in extracted_by_marks[marks]:
             question = eq['question']
@@ -271,12 +321,23 @@ def generate_questions(text, questions_per_category=3):
                 subtopic = detect_subtopic_with_llm(question, topic)
                 
                 meta = MARKS_META[marks]
+                
+                # Use BERT to predict difficulty
+                print(f"\n   🤖 Predicting difficulty for extracted question...")
+                bert_difficulty = predict_difficulty_bert(
+                    question=question,
+                    question_type=meta["question_type"],
+                    cognitive_level=meta["cognitive_level"],
+                    topic=topic,
+                    marks=marks
+                )
+                
                 question_json = {
                     "question": question,
                     "topic": topic,
                     "subtopic": subtopic,
                     "question_type": meta["question_type"],
-                    "difficulty_level": meta["difficulty_level"],
+                    "difficulty_level": bert_difficulty,  # BERT prediction instead of default
                     "cognitive_level": meta["cognitive_level"],
                     "category": topic,
                     "image": None,
@@ -303,7 +364,7 @@ def generate_questions(text, questions_per_category=3):
                 
                 marks_buckets[marks].append(question_json)
     
-    # Generate new questions
+    # Generate new questions (with BERT difficulty prediction)
     for marks in [2, 3, 5]:
         current_count = len(marks_buckets[marks])
         needed = questions_per_category - current_count
@@ -363,12 +424,23 @@ def generate_questions(text, questions_per_category=3):
                 subtopic = detect_subtopic_with_llm(question, topic)
                 
                 meta = MARKS_META[marks]
+                
+                # Use BERT to predict difficulty
+                print(f"\n      🤖 Predicting difficulty with BERT...")
+                bert_difficulty = predict_difficulty_bert(
+                    question=question,
+                    question_type=meta["question_type"],
+                    cognitive_level=meta["cognitive_level"],
+                    topic=topic,
+                    marks=marks
+                )
+                
                 question_json = {
                     "question": question,
                     "topic": topic,
                     "subtopic": subtopic,
                     "question_type": meta["question_type"],
-                    "difficulty_level": meta["difficulty_level"],
+                    "difficulty_level": bert_difficulty,  # BERT prediction instead of default
                     "cognitive_level": meta["cognitive_level"],
                     "category": topic,
                     "image": None,
@@ -416,6 +488,11 @@ def generate_questions(text, questions_per_category=3):
     
     print(f"\n🎯 Total: {total} questions")
     
+    if BERT_AVAILABLE:
+        print("\n✅ Difficulty levels assigned using BERT model")
+    else:
+        print("\n⚠️  Difficulty levels assigned using heuristic (BERT not available)")
+    
     return {
         "2_mark": marks_buckets[2],
         "3_mark": marks_buckets[3],
@@ -443,8 +520,8 @@ if __name__ == "__main__":
     text_file = "/Users/tanusharma/Downloads/coe-project/output_of_stages/extracted_output.txt"
     output_file = "/Users/tanusharma/Downloads/coe-project/output_of_stages/generated_questions.json"
     
-    print("🚀 UNIVERSITY QUESTION GENERATION SYSTEM V2")
-    print("=" * 60)
+    print("🚀 UNIVERSITY QUESTION GENERATION SYSTEM V3 (WITH BERT)")
+    print("=" * 70)
     
     try:
         with open(text_file, "r", encoding="utf-8") as f:
@@ -458,9 +535,9 @@ if __name__ == "__main__":
         
         # Show a sample of the input
         print("\n📄 Input text sample (first 300 chars):")
-        print("-" * 60)
+        print("-" * 70)
         print(text[:300])
-        print("-" * 60)
+        print("-" * 70)
         
     except Exception as e:
         print(f"❌ Error loading file: {e}")
@@ -472,14 +549,15 @@ if __name__ == "__main__":
     # Save
     if save_questions(final_questions, output_file):
         print("\n🎉 GENERATION COMPLETED!")
-        print("=" * 60)
+        print("=" * 70)
         
         for category, questions in final_questions.items():
             if questions:
                 print(f"\n📋 {category}:")
                 for i, q in enumerate(questions, 1):
                     source = "📄" if q.get('source') == 'extracted' else "🤖"
-                    print(f"\n   {source} Q{i}: {q['question'][:150]}...")
+                    difficulty_icon = {"easy": "🟢", "medium": "🟡", "hard": "🔴"}.get(q['difficulty_level'], "⚪")
+                    print(f"\n   {source} {difficulty_icon} Q{i} [{q['difficulty_level'].upper()}]: {q['question'][:150]}...")
     else:
         print("❌ Failed to save questions")
         exit(1)
