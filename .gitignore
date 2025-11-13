@@ -64,9 +64,7 @@ share/
 # Ignore generated index folders
 /faiss_index_ollama/
 /new_faiss_index/
-/question_storage/faiss_index/
 /Clean_subtopics/__pycache__/
-/Pyteseract/
 
 # ---- Jupyter ----
 .ipynb_checkpoints/
