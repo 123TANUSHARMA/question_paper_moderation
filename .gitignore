@@ -28,7 +28,6 @@ share/
 
 # ---- Data & Index Files ----
 # FAISS and Pickle indexes
-*.faiss
 *.pkl
 *.npy
 *.npz
